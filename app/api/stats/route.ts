@@ -1,0 +1,1 @@
+//isme humko sarre expensees calculate krne hai so hum aggregate property ka use krenge but pehle logic sochna hoga
