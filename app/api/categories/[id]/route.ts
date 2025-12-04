@@ -16,7 +16,7 @@ export async function DELETE(request:NextRequest ,  { params }: { params: { id: 
       const session = await getServerSession()
       
       if (!session?.user) {
-        return NextResponse.json("User Not Authonticated",{status:404})        
+        return NextResponse.json({error:"User Not Authonticated"},{status:404})        
       }
 
       //idhar hi khaali nhi chd skte hai humne database mai category mai bhi userId di hai usme se bhi check krwana hoga
