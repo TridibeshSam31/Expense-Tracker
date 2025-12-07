@@ -82,7 +82,7 @@ export async function POST(request: NextRequest) {
       data: {
         amount,
         description,
-        date: new Date(date),
+        date: new Date(date as string),
         userId: session.user.id,
         categoryId: categoryId || null,
       },
@@ -95,7 +95,7 @@ export async function POST(request: NextRequest) {
   } catch (error:unknown) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: error.errors[0].message },
+        { error: error.issues[0].message },
         { status: 400 }
       )
     }
