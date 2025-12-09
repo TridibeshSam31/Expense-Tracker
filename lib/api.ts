@@ -25,7 +25,7 @@ Mutation states
 Background refetch info
 Observers (kaunsi component iss query ko use kar rahi hai)
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient(); 
 
 
 
@@ -100,6 +100,48 @@ invalidateQueries
 
 YEH TEENO MAJORLY AATE HAI 
 AB INKA USE KYA HAI KAISE HIYA JAATA HAI WOH JAANNA JARRURI HAI 
+
+INKE ALAWA TANSTACK QUERY HUME 2MAJOR HOOKS PROVIDE KRTI HAI 
+1.useMutations
+2.useQuery 
+
+Now inhe details mai dekhte hai useMutations hota hai hmara tab use jab hmare api mai hori hai cheeje jaise CREATE,UPDATE,DELETE,ACTIONS basocally data create krne ke liye 
+mtlb??
+
+Example use cases:
+Create new expense
+Edit expense
+Delete expense
+Add category
+Mark todo as completed
+Login (POST)
+Upload file
+Update profile
+
+Basically:
+
+POST / PUT / PATCH(update only a specific field) / DELETE = useMutation
+
+ab useQuery kab use hota hai ??
+useQuery hota hai use jab hum get request ko handle krte hai 
+Aur sirf READ operations ke liye.
+
+Example use cases:
+Get all expenses
+Get stats
+Get user profile
+Get categories
+Get todos
+Get products list
+Get weather
+
+Basically GET request = useQuery.
+
+
+inhi se hum likhte hai code kaafi aasan bna dete hai cheeje ab aakri cheeje dekhte hai ki QueryKey
+QueryFxn
+invalidateQueries
+
 
 
 
