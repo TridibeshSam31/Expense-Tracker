@@ -357,7 +357,77 @@ export function useCategories(){
 export function useCreateCategory(){
     const queryClient = useQueryClient()
     return useMutation ({
-        mutatuionFn:async(data:{})
+        mutationFn:async(data:{name:string,color:string})=>{
+            const response = await fetch('/api/categories',{
+                method:"POST",
+                headers:{
+                    "content-type":"application/json"
+                },
+                body:JSON.stringify(data)
+            })
+            if (!response.ok) {
+                throw new Error('Failed to create category')
+            }
+            return response.json()
+        },
+        onSuccess:()=>{
+            queryClient.invalidateQueries({queryKey:['categories']})
+            queryClient.invalidateQueries({ queryKey: ['stats'] })
+        }
+    })
+}
 
+
+//patch,put,delete 
+
+export function useUpdateCategory(){
+    const queryClient = useQueryClient()
+    return useMutation({
+        mutationFn:async({
+            id,
+            ...data
+        }:{
+            id: string
+            name?: string
+            color?: string
+        })=>{
+            const response = await fetch(`/api/categories/${id}`,{
+                method:"PATCH",
+                headers:{
+                    "content-type":"application/json"
+                },
+                body:JSON.stringify(data)
+            })
+            if (!response.ok) {
+                throw new Error('Failed to update category')
+            }
+            return response.json()
+        },
+        onSuccess:()=>{
+            queryClient.invalidateQueries({queryKey:['categories']})
+            queryClient.invalidateQueries({ queryKey: ['stats'] })
+        }
+    })
+}
+
+//for delete 
+
+export function useDeleteCategory(){
+    const queryClient = useQueryClient()
+    return useMutation({
+        mutationFn:async(id:string)=>{
+            const response = await fetch(`/api/categories/${id}`, {
+        method: 'DELETE',
+      })
+            if (!response.ok) {
+                throw new Error('Failed to delete category')
+            }
+
+            return response.json()
+        },
+        onSuccess:()=>{
+            queryClient.invalidateQueries({queryKey:['categories']})
+            queryClient.invalidateQueries({ queryKey: ['stats'] })
+        }
     })
 }
