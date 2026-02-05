@@ -144,29 +144,220 @@ invalidateQueries
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 */
+"use client"
+
+import { useQuery,useMutation,useQueryClient } from "@tanstack/react-query";
+
+export interface Expense {
+    id:string,
+    amount:number,
+    description:string,
+    date:string,
+    category:Category | null,
+    categoryId:string | null,
+    userId:string,
+    createdAt:string,
+    updatedAt:string
+    
+}
+
+export interface Category{
+    id:string,
+    name:string,
+    color:string,
+    userId:string,
+    createdAt:string,
+    updatedAt:string
+
+}
+
+export interface ExpenseStats{
+    total:number,
+    byCategory: Array<{
+        categoryId:string | 0 | null,
+        total:number,
+        color:string | null
+    }>
+
+    byMonth: Array<{
+        month:string,
+        total:number
+    }>
+}
+
+
+
+//Expense hooks using tanstack query
+//this will be a get request , so useQuery will be used
+export function useExpenses(startDate?: string, endDate?: string){
+    return useQuery<Expense[]>({
+        queryKey:['expenses',startDate,endDate],
+        queryFn:async ()=>{
+            const params = new URLSearchParams()
+            if (startDate) {
+                params.append('startDate', startDate)
+                
+            }
+            if (endDate) {
+                params.append('endDate', endDate)
+            }
+            const response = await fetch(`/api/expenses?${params.toString()}`)
+            if (!response.ok) {
+                throw new Error('Failed to fetch expenses')
+            }
+            return response.json()
+        }
+
+
+    })
+
+}
+
+//post request ke lye useMutation ka use 
+export function useCreateExpense(){
+    const queryClient = useQueryClient()
+    return useMutation({
+        mutationFn:async (data:{
+            amount:number,
+            description:string,
+            date:string,
+            categoryId:string | null
+        }) =>{
+            const response = await fetch('/api/expenses',{
+                method:"POST",
+                headers:{
+                    "content-type":"application/json"
+                },
+                body:JSON.stringify(data)
+            })
+
+            if (!response.ok) {
+                throw new Error('Failed to create expense')
+            }
+            return response.json()
+        },
+        onSuccess:()=>{
+            //Invalidate and refetch
+            queryClient.invalidateQueries({queryKey:['expenses']})
+            queryClient.invalidateQueries({ queryKey: ['stats'] })
+        }
+    })
+
+}
+
+
+//patch /put/Delete request ke lye useMutation ka use
+
+export function useUpdateExpense(){
+    const queryClient = useQueryClient()
+
+    return useMutation({
+        mutationFn:async({
+            id,
+            ...data
+        }:{
+            id: string
+            amount: number
+            description: string
+            date: string
+            categoryId?: string | null
+        })=>{
+            const response = await fetch(`/api/expenses/${id}`,{
+                method:"PATCH",
+                headers:{
+                    "content-type":"application/json"
+                },
+                body:JSON.stringify(data)
+            })
+
+            if (!response.ok) {
+                throw new Error('Failed to update expense')
+            }
+            return response.json()
+        },
+        onSuccess:()=>{
+            queryClient.invalidateQueries({queryKey:['expenses']})
+            queryClient.invalidateQueries({ queryKey: ['stats'] })
+        }
+    })
+
+}
+
+
+//delete request ke lye useMutation ka use
+
+export function useDeleteExpense(){
+    const queryClient = useQueryClient()
+
+    return useMutation({
+        mutationFn:async(id:string)=>{
+            const response = await fetch(`/api/expenses/${id}`,{
+                method:"DELETE"
+            })
+            if(!response.ok){
+                throw new Error('Failed to delete expense')
+            }
+
+            return response.json()
+        },
+        onSuccess:()=>{
+            queryClient.invalidateQueries({queryKey:['expenses']})
+            queryClient.invalidateQueries({ queryKey: ['stats'] })
+        }
+    })
+}
+
+
+//fetching stats ke lye useQuery ka use
+
+//getting stats ke lye
+export function useExpenseStats(startDate?:string,endDate?:string){
+    return useQuery<ExpenseStats>({
+        queryKey:['stats',startDate,endDate],
+        queryFn:async()=>{
+            const params = new URLSearchParams()
+            if (startDate) {
+                params.append('startDate',startDate)
+            }
+            if (endDate) {
+                params.append('endDate',endDate)
+            }
+            const response = await fetch(`/api/stats?${params.toString()}`)
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch stats')
+            }
+            return response.json()
+        }
+    })
+
+}
+
+
+//now categories ke liye 
+//get ke liye useQuery 
+export function useCategories(){
+    return useQuery<Category[]>({
+        queryKey:['categories'],
+        queryFn:async()=>{
+            const response = await fetch(`/api/categories`)
+            if (!response.ok) {
+                throw new Error('Failed to fetch categories')
+                
+            }
+            return response.json()
+        }
+    })
+}
+
+
+//post ke liye useMutation
+
+export function useCreateCategory(){
+    const queryClient = useQueryClient()
+    return useMutation ({
+        mutatuionFn:async(data:{})
+
+    })
+}
