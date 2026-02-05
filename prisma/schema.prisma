@@ -19,63 +19,79 @@ datasource db {
 //I need Expense model  , categories model
 
 model User{
-  id String @id @default(uuid())
-  name String 
-  email String @unique
-  password String? 
-  image String?
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  id            String    @id @default(uuid())
+  name          String 
+  email         String    @unique
+  emailVerified Boolean   @default(false) @map("email_verified")
+  password      String? 
+  image         String?
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
 
- 
-  sessions Session[]
-  expenses Expense[]
+  sessions   Session[]
+  accounts   Account[]
+  expenses   Expense[]
   categories Category[]
 
   @@map("users")
 }
 
 model Category{
-  id String @id @default(uuid())
-  name String
-  color String
-  userId String
-  user User @relation(fields:[userId],references: [id],onDelete: Cascade)
-  expenses Expense[]
+  id        String   @id @default(uuid())
+  name      String
+  color     String
+  userId    String   @map("user_id")
+  user      User     @relation(fields:[userId],references: [id],onDelete: Cascade)
+  expenses  Expense[]
 
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   @@unique([name, userId])
   @@map("categories")
 }
 
-
 model Expense{
-  id String @id @default(uuid())
-  amount Float
+  id          String   @id @default(uuid())
+  amount      Float
   description String
-  date DateTime @default(now())
-  userId String
-  categoryId String
-  user User @relation(fields:[userId],references: [id],onDelete: Cascade)
-  category Category @relation(fields: [categoryId],references: [id],onDelete: Cascade)
+  date        DateTime @default(now())
+  userId      String   @map("user_id")
+  categoryId  String   @map("category_id")
+  user        User     @relation(fields:[userId],references: [id],onDelete: Cascade)
+  category    Category @relation(fields: [categoryId],references: [id],onDelete: Cascade)
 
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
 
   @@map("expenses")
-  //indexing not needed but ok
   @@index([userId])
   @@index([date])
 }
 
+model Account {
+  id                    String    @id @default(uuid())
+  accountId             String    @map("account_id")
+  providerId            String    @map("provider_id")
+  userId                String    @map("user_id")
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?   @map("access_token")
+  refreshToken          String?   @map("refresh_token")
+  idToken               String?   @map("id_token")
+  accessTokenExpiresAt  DateTime? @map("access_token_expires_at")
+  refreshTokenExpiresAt DateTime? @map("refresh_token_expires_at")
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now()) @map("created_at")
+  updatedAt             DateTime  @updatedAt @map("updated_at")
 
-//session ki need login logout ke liye hai 
+  @@map("accounts")
+}
+
 model Session{
-  id String @id @default(uuid())
-  token String @unique
-  userId String
+  id        String   @id @default(uuid())
+  token     String   @unique
+  userId    String   @map("user_id")
   expiresAt DateTime @map("expires_at")
   ipAddress String?  @map("ip_address")
   userAgent String?  @map("user_agent")
@@ -89,7 +105,6 @@ model Session{
   @@index([token])
 }
 
-//verifiaction ke liye bhi likhna hoga kyonki woh password resets ke liye use aata hai
 model Verification {
   id         String   @id @default(uuid())
   identifier String
@@ -101,4 +116,6 @@ model Verification {
   @@unique([identifier, value])
   @@map("verification")
 }
+
+
 

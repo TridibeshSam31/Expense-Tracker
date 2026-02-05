@@ -8,14 +8,14 @@ import { redirect } from "next/navigation";
 
 export default async function Home() {
   //nextjs 14 versions supports asyn compononents in frontend 
-  const session = await auth.api.getSession()
+  const session = await auth.api.getSession({headers: {}})
 
   if (session?.user) {
     redirect('/dashboard')
     
   }
   return (
-  <div className="min-h-screen flex items-center justify-center px-4 bg-slate-500">
+  <div className="min-h-screen flex items-center justify-center px-4 bg-slate-100">
    <div className="max-w-4xl w-full mx-auto">
    <div className="text-center mb-12 ">
    <div className="flex justify-center mb-6">
