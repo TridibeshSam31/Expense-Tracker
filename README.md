@@ -109,3 +109,8 @@ Contributions make the open-source community an amazing place!
 ## 📄 License
 
 Distributed under the MIT License.
+
+
+## Author
+
+Tridibesh Samantroy 
