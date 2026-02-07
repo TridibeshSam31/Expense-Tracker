@@ -12,6 +12,12 @@ A modern, high-performance expense tracking application built with **Next.js 16*
 - 📱 **Premium UI**: Responsive and polished design built with **Tailwind CSS** and **Radix UI** components.
 - 🛠️ **Full Type Safety**: End-to-end type safety with **TypeScript** and **Zod** validation.
 
+## 📸 Screenshots
+
+### 🏠 Landing Page
+![Landing Page](./ScreenShots/Landing.png)
+
+
 ## 🛠️ Tech Stack
 
 - **Framework**: [Next.js 16](https://nextjs.org/) (App Router)
