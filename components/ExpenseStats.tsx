@@ -144,12 +144,131 @@ export default function EcpenseStats({expenses,period}:ExpenseStatsProps){
         
    }
 
-    
+   const monthlyData = useMemo(() => {
+   const result = []
+
+  for (let i = 0; i < 6; i++) {
+    const monthDate = subMonths(new Date(), 5 - i)
+    const monthKey = format(monthDate, 'yyyy-MM')
+
+    let total = 0
+
+    for (let j = 0; j < expenses.length; j++) {
+      const expenseMonth = format(
+        new Date(expenses[j].date),
+        'yyyy-MM'
+      )
+
+      if (expenseMonth === monthKey) {
+        total += expenses[j].amount
+      }
+    }
+
+    result.push({
+      month: format(monthDate, 'MMM'),
+      total: Number(total.toFixed(2)),
+    })
+  }
+
+  return result
+}, [expenses])
+
+    if (loading) {
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        {[1, 2, 3].map((i) => (
+          <div key={i} className="bg-white rounded-lg shadow p-6">
+            <div className="h-20 bg-gray-200 animate-pulse rounded"></div>
+          </div>
+        ))}
+      </div>
+    )
+  }
 
 
 
 
     return (
-      <div></div>
+      <div className="space-y-8">
+      {/* Summary Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="bg-white rounded-lg shadow p-6">
+          <div className="text-sm font-medium text-gray-600 mb-1">Total Expenses</div>
+          <div className="text-3xl font-bold text-gray-900">
+            ${totalExpenses.toFixed(2)}
+          </div>
+          <div className="text-sm text-gray-500 mt-2">
+            {expenses.length} {expenses.length === 1 ? 'expense' : 'expenses'}
+          </div>
+        </div>
+
+        <div className="bg-white rounded-lg shadow p-6">
+          <div className="text-sm font-medium text-gray-600 mb-1">Average Expense</div>
+          <div className="text-3xl font-bold text-gray-900">
+            ${expenses.length > 0 ? (totalExpenses / expenses.length).toFixed(2) : '0.00'}
+          </div>
+          <div className="text-sm text-gray-500 mt-2">Per transaction</div>
+        </div>
+
+        <div className="bg-white rounded-lg shadow p-6">
+          <div className="text-sm font-medium text-gray-600 mb-1">Categories Used</div>
+          <div className="text-3xl font-bold text-gray-900">
+            {categoryData.length}
+          </div>
+          <div className="text-sm text-gray-500 mt-2">Active categories</div>
+        </div>
+      </div>
+
+      {/* Charts */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Category Breakdown Pie Chart */}
+        {categoryData.length > 0 && (
+          <div className="bg-white rounded-lg shadow p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              Spending by Category
+            </h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={categoryData}
+                  cx="50%"
+                  cy="50%"
+                  labelLine={false}
+                  label={({ name, percent }) =>
+                    `${name} ${(percent * 100).toFixed(0)}%`
+                  }
+                  outerRadius={100}
+                  fill="#8884d8"
+                  dataKey="value"
+                >
+                  {categoryData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Pie>
+                <Tooltip formatter={(value: number) => `$${value.toFixed(2)}`} />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+        )}
+
+        {/* Monthly Spending Bar Chart */}
+        {monthlyData.length > 0 && (
+          <div className="bg-white rounded-lg shadow p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              Monthly Spending (Last 6 Months)
+            </h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={monthlyData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="month" />
+                <YAxis />
+                <Tooltip formatter={(value: number) => `$${value.toFixed(2)}`} />
+                <Bar dataKey="total" fill="#0ea5e9" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        )}
+      </div>
+    </div>
     )
 }
