@@ -51,23 +51,22 @@ model Category{
   @@map("categories")
 }
 
-model Expense{
+model Expense {
   id          String   @id @default(uuid())
   amount      Float
   description String
   date        DateTime @default(now())
+
   userId      String   @map("user_id")
   categoryId  String   @map("category_id")
-  user        User     @relation(fields:[userId],references: [id],onDelete: Cascade)
-  category    Category @relation(fields: [categoryId],references: [id],onDelete: Cascade)
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category    Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
 
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
-
-  @@map("expenses")
-  @@index([userId])
-  @@index([date])
 }
+
 
 model Account {
   id                    String    @id @default(uuid())
