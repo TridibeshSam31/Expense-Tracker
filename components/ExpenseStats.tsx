@@ -57,15 +57,15 @@ export default function EcpenseStats({expenses,period}:ExpenseStatsProps){
     let end:string|undefined = undefined
     const now = new Date()
 
-    if (period = 'week') {
+    if (period === 'week') {
       start = new Date(now.getTime() - 7*24*60*60*1000).toISOString()
       end = now.toISOString()
            
-    }else if(period = 'month'){
+    }else if(period === 'month'){
       start = startOfMonth(now).toISOString()
       end = endOfMonth(now).toISOString()
 
-    }else if(period = 'year'){
+    }else if(period === 'year'){
       start = new Date(now.getFullYear(),0,1).toISOString()
       end = now.toISOString()
 

@@ -19,7 +19,7 @@ type SignInForm = z.infer<typeof signInSchema>
 
 
 
-export default function SignInPage() {
+function SignInForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const { toast } = useToast()
@@ -141,6 +141,14 @@ export default function SignInPage() {
         </CardFooter>
       </Card>
     </div>
+  )
+}
+
+export default function SignInPage() {
+  return (
+    <React.Suspense fallback={null}>
+      <SignInForm />
+    </React.Suspense>
   )
 }
 

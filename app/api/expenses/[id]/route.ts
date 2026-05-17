@@ -49,7 +49,7 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ i
 
 }
 
-export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }){
+export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }){
     //yeh thoda mushkil hai noramal method se expenses ko delete nhi kr skte logic dhundna mushkil hai
     //sbse pehle user authentication
     try {
