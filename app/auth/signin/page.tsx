@@ -1,16 +1,16 @@
 "use client"
 import React from 'react'
-import {useState,useEffect} from "react"
+import { useState, useEffect } from "react"
 import Link from 'next/link'
-import {useForm} from "react-hook-form"
-import {zodResolver} from "@hookform/resolvers/zod"
-import {z} from "zod"
-import {useToast} from "@/components/ui/use-toast"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { z } from "zod"
+import { useToast } from "@/components/ui/use-toast"
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
-import {useRouter,useSearchParams} from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { Wallet } from 'lucide-react'
 import { authClient } from '@/lib/auth-client'
 import signInSchema from '@/Schema/signInSchema'
@@ -20,22 +20,22 @@ type SignInForm = z.infer<typeof signInSchema>
 
 
 export default function SignInPage() {
-    const router = useRouter()
-    const searchParams = useSearchParams()
-    const {toast} = useToast()
-    const [isLoading,setIsLoading] = useState(false)
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const { toast } = useToast()
+  const [isLoading, setIsLoading] = useState(false)
 
-    useEffect(()=>{
-        if (searchParams.get("registered") === "true") {
-            toast({
-                title: "Account created successfully",
-                description: "You can now sign in with your credentials.",
-            })
-        }
-    },[searchParams,toast])
+  useEffect(() => {
+    if (searchParams.get("registered") === "true") {
+      toast({
+        title: "Account created successfully",
+        description: "You can now sign in with your credentials.",
+      })
+    }
+  }, [searchParams, toast])
 
-    
-     const {
+
+  const {
     register,
     handleSubmit,
     formState: { errors },
