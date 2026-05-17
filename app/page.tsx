@@ -4,11 +4,13 @@ import { Card,CardContent,CardHeader,CardTitle,CardDescription } from "@/compone
 import Link from "next/link";
 import {auth} from "@/lib/auth"
 import { redirect } from "next/navigation";
+import { headers } from "next/headers";
+
 
 
 export default async function Home() {
   //nextjs 14 versions supports asyn compononents in frontend 
-  const session = await auth.api.getSession({headers: {}})
+  const session = await auth.api.getSession({ headers: await headers() })
 
   if (session?.user) {
     redirect('/dashboard')

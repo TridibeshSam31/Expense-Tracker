@@ -40,22 +40,18 @@ export default function SignUpPage() {
 
   const signupMutation = useMutation({
     mutationFn: async (data: SignUpForm) => {
-      // Build the request payload - name is optional in Better Auth
-      const payload: {
-        email: string
-        password: string
-        name?: string
-      } = {
+      const payload = {
         email: data.email,
         password: data.password,
-      }
-      
-      // Only include name if it's provided
-      if (data.name && data.name.trim()) {
-        payload.name = data.name.trim()
+        name: data.name.trim(),
       }
 
-      const result = await authClient.signUp.email(payload)
+      const result = await authClient.signUp.email(payload) as {
+        error?: {
+          message?: string
+          code?: string
+        }
+      }
 
       if (result.error) {
         // Better Auth error format - log for debugging
@@ -63,7 +59,7 @@ export default function SignUpPage() {
         const errorMessage = 
           result.error.message || 
           result.error.code || 
-          (typeof result.error === 'object' ? JSON.stringify(result.error) : String(result.error)) ||
+          (typeof result.error === 'object' ? JSON.stringify(result.error) : String(result.error as Error)) ||
           'Registration failed'
         throw new Error(errorMessage)
       }
@@ -77,7 +73,12 @@ export default function SignUpPage() {
       const result = await authClient.signIn.email({
         email: data.email,
         password: data.password,
-      })
+      }) as {
+        error?: {
+          message?: string
+          code?: string
+        }
+      }
 
       if (result.error) {
         throw new Error(result.error.message || 'Sign in failed')

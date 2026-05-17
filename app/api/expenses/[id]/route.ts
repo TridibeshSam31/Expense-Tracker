@@ -7,8 +7,9 @@ import expenseSchema from "@/Schema/expenseSchema";
 
 
 
-export async function DELETE(response:NextResponse,{ params }: { params: { id: string } }){
+export async function DELETE(request: Request, { params }: { params: { id: string } }){
     try {
+        const { id } = await params
         const session = await getServerSession()
         const user = session?.user.id 
     
@@ -21,7 +22,7 @@ export async function DELETE(response:NextResponse,{ params }: { params: { id: s
     
        const expense = await prisma.expense.findUnique({
         where:{
-            id:params.id
+            id:id
         }
        })
     
@@ -32,7 +33,7 @@ export async function DELETE(response:NextResponse,{ params }: { params: { id: s
     
        const deleteIndb = await prisma.expense.delete({
         where:{
-            id:params.id
+            id:id
         }
        })
     
@@ -48,10 +49,11 @@ export async function DELETE(response:NextResponse,{ params }: { params: { id: s
 
 }
 
-export async function PUT(response:NextResponse,{ params }: { params: { id: string } }){
+export async function PUT(request: Request,response:NextResponse, { params }: { params: { id: string } }){
     //yeh thoda mushkil hai noramal method se expenses ko delete nhi kr skte logic dhundna mushkil hai
     //sbse pehle user authentication
     try {
+        const { id } = params
       const session = await getServerSession()
         const user = session?.user.id 
     
@@ -63,7 +65,7 @@ export async function PUT(response:NextResponse,{ params }: { params: { id: stri
 
         const expense = await prisma.expense.findUnique({
         where:{
-            id:params.id
+            id:id
         }
        })
     
@@ -95,7 +97,7 @@ export async function PUT(response:NextResponse,{ params }: { params: { id: stri
        }
 
        const updateindb = await prisma.expense.update({
-         where: { id: params.id },
+         where: { id:id },
          data: updateData,
         include: { category: true }, //After updating this expense, also fetch and return the linked category object
        })

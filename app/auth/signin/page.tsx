@@ -20,7 +20,7 @@ type SignInForm = z.infer<typeof signInSchema>
 
 
 export default function SignInPage() {
-    const {router} = useRouter()
+    const router = useRouter()
     const searchParams = useSearchParams()
     const {toast} = useToast()
     const [isLoading,setIsLoading] = useState(false)

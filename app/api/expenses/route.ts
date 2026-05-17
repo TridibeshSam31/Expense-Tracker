@@ -12,7 +12,7 @@ export async function GET(request:NextRequest){
    try {
      const session = await getServerSession()
  
-     if (session?.user.id) {
+     if (!session?.user?.id) {
         return NextResponse.json({error:'unauthorized'},{status:401})
      }
  
@@ -80,11 +80,11 @@ export async function POST(request: NextRequest) {
 
     const expense = await prisma.expense.create({
       data: {
-        amount,
-        description,
+        amount: amount as number,
+        description:description as string,
         date: new Date(date as string),
         userId: session.user.id,
-        categoryId: categoryId || null,
+        categoryId: categoryId as string,
       },
       include: {
         category: true,

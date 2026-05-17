@@ -6,8 +6,9 @@ import { NextRequest,NextResponse } from "next/server";
 
 
 
-export async function DELETE(request:NextRequest ,  { params }: { params: { id: string } }){
+export async function DELETE(request:NextRequest ,  { params }: { params: Promise<{ id: string } >}){
     try {
+      const {id} = await params
       //user authentication check kro 
       //agar user aunticated hai 
       //then search the id from  the database 
@@ -27,25 +28,24 @@ export async function DELETE(request:NextRequest ,  { params }: { params: { id: 
       
       const category = await prisma.category.findUnique({
         where:{
-            id:params.id
+            id
         }
       })
 
-      if (!category|| category.userId!==session.user) {
-        return NextResponse.json("User Not Found",{status:403})
-        
+      if (!category || category.userId !== session.user?.id) {
+        return NextResponse.json("User Not Found", { status: 403 })
       }
 
       //jab yeh mil jaaaye then kaam ho gya so delte
 
       const deleteByid = await prisma.category.delete({
         where:{
-            id:params.id
+            id
         }
       })
 
       //response pass krwa do 
-      return NextResponse.json("Category Delted Successfully",deleteByid)
+      return NextResponse.json({ message: "Category Deleted Successfully", category: deleteByid })
 
 
     } catch (error) {
