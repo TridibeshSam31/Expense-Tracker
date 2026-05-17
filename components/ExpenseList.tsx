@@ -64,7 +64,7 @@ const ExpenseList = ({
 }:ExpenseListProps) => {
 
     const [editingExpense,setEditingExpense] = useState<Expense|null>(null)
-    const [deletingExpense,setDeletingExpense] = useState(null)
+    const [deletingExpense,setDeletingExpense] = useState<Expense|null>(null)
     const {toast} = useToast()
     const deleteExpense = useDeleteExpense()
 
@@ -80,7 +80,6 @@ const ExpenseList = ({
         }
 
         try {
-            //@ts-ignore
             await deleteExpense.mutateAsync(deletingExpense.id)
             toast({
         title: 'Expense deleted',
@@ -88,12 +87,11 @@ const ExpenseList = ({
       })
       setDeletingExpense(null)
       if (onExpenseDeleted) {
-        //@ts-expect-error
         onExpenseDeleted(deletingExpense.id)
       }
         } catch (error:Error|unknown) {
             toast({
-                varient:"destructive",
+                variant:"destructive",
                 title:"Error",
                 description:error instanceof Error ? error.message : "Something went wrong"
             })
@@ -107,7 +105,6 @@ const ExpenseList = ({
         }
         setEditingExpense(null)
     }
-     //@ts-ignore
     const isDeleting = deleteExpense.isPending && deletingExpense?.id === deleteExpense.variables
 
     if (loading) {
@@ -185,7 +182,6 @@ const ExpenseList = ({
                     <Button
                       variant="ghost"
                       size="icon"
-                      //@ts-ignore
                       onClick={() => setDeletingExpense(expense)}
                       className="h-9 w-9 text-destructive hover:text-destructive"
                     >
@@ -204,7 +200,7 @@ const ExpenseList = ({
           <DialogHeader>
             <DialogTitle>Edit Expense</DialogTitle>
             <DialogDescription>
-              Make changes to your expense. Click save when you're done.
+              Make changes to your expense. Click save when you&apos;re done.
             </DialogDescription>
           </DialogHeader>
           {editingExpense && (

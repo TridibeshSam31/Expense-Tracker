@@ -33,7 +33,7 @@ export async function POST(request:NextRequest){
        }
 
        //check if the user already has categories
-       const existingCategories = await prisma.Category.findMany({
+       const existingCategories = await prisma.category.findMany({
         where:{
             userId:user
         }

@@ -7,7 +7,7 @@ import expenseSchema from "@/Schema/expenseSchema";
 
 
 
-export async function DELETE(request: Request, { params }: { params: { id: string } }){
+export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }){
     try {
         const { id } = await params
         const session = await getServerSession()
@@ -49,11 +49,11 @@ export async function DELETE(request: Request, { params }: { params: { id: strin
 
 }
 
-export async function PUT(request: Request,response:NextResponse, { params }: { params: { id: string } }){
+export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }){
     //yeh thoda mushkil hai noramal method se expenses ko delete nhi kr skte logic dhundna mushkil hai
     //sbse pehle user authentication
     try {
-        const { id } = params
+        const { id } = await params
       const session = await getServerSession()
         const user = session?.user.id 
     
@@ -75,7 +75,7 @@ export async function PUT(request: Request,response:NextResponse, { params }: { 
        }
 
        //now the updation works starts
-       const body = await response.json()
+       const body = await request.json()
        const data = expenseSchema.parse(body)
        //console.log(data)
        //in the data we have categoryId , amount , description , data

@@ -87,7 +87,7 @@ export default function ExpenseForm({
       // Convert 'none' to undefined for categoryId
       const requestData = {
         ...data,
-        categoryId: data.categoryId === 'none' ? undefined : data.categoryId,
+        categoryId: data.categoryId === 'none' ? null : data.categoryId || null,
       }
 
       if (editingExpense) {

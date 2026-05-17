@@ -234,7 +234,7 @@ export default function EcpenseStats({expenses,period}:ExpenseStatsProps){
                   cx="50%"
                   cy="50%"
                   labelLine={false}
-                  label={({ name, percent }) =>
+                  label={({ name, percent = 0 }) =>
                     `${name} ${(percent * 100).toFixed(0)}%`
                   }
                   outerRadius={100}
@@ -245,7 +245,7 @@ export default function EcpenseStats({expenses,period}:ExpenseStatsProps){
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
                 </Pie>
-                <Tooltip formatter={(value: number) => `$${value.toFixed(2)}`} />
+                <Tooltip formatter={(value: number | undefined) => value !== undefined ? `$${value.toFixed(2)}` : ''} />
               </PieChart>
             </ResponsiveContainer>
           </div>
@@ -262,7 +262,7 @@ export default function EcpenseStats({expenses,period}:ExpenseStatsProps){
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="month" />
                 <YAxis />
-                <Tooltip formatter={(value: number) => `$${value.toFixed(2)}`} />
+                <Tooltip formatter={(value: number | undefined) => value !== undefined ? `$${value.toFixed(2)}` : ''} />
                 <Bar dataKey="total" fill="#0ea5e9" />
               </BarChart>
             </ResponsiveContainer>
