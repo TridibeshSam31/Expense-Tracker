@@ -186,6 +186,17 @@ export interface ExpenseStats{
     }>
 }
 
+export interface Budget {
+    id: string
+    amount: number
+    month: string
+    categoryId: string | null
+    userId: string
+    category: Category | null
+    createdAt: string
+    updatedAt: string
+}
+
 
 
 //Expense hooks using tanstack query
@@ -437,3 +448,65 @@ export function useDeleteCategory(){
 
 //for get request we will use useQuery
 
+export function useBudgets(month:string){
+    return useQuery<Budget[]>({
+        queryKey:['budgets',month],
+        queryFn:async()=>{
+            const params = new URLSearchParams()
+            params.append('month',month)
+            const response = await fetch(`/api/budgets?${params.toString()}`)
+            if(!response.ok){
+                throw new Error('Failed to fetch budgets')
+            }
+            return response.json()
+
+        }
+    })
+}
+
+//for post request we will use useMutation
+
+export function useCreateOrUpdateBudget(){
+    const queryClient = useQueryClient()
+    return useMutation({
+        mutationFn:async(data:{
+            amount:number,
+            month:string,
+            categoryId?:string | null
+        })=>{
+             const response = await fetch('/api/budgets',{
+                method:"POST",
+                headers:{
+                    "content-type":"application/json"
+                },
+                body:JSON.stringify(data)
+            })
+            if (!response.ok) {
+                throw new Error('Failed to update category')
+            }
+            return response.json()
+            
+        },
+        onSuccess:(_response, variables)=>{
+            queryClient.invalidateQueries({ queryKey: ['budgets', variables.month] })
+        }
+    })
+}
+
+export function useDeleteBudget() {
+    const queryClient = useQueryClient()
+    return useMutation({
+        mutationFn: async (id: string) => {
+            const response = await fetch(`/api/budgets/${id}`, {
+                method: "DELETE"
+            })
+            if (!response.ok) {
+                throw new Error('Failed to delete budget')
+            }
+            return response.json()
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['budgets'] })
+        }
+    })
+}
