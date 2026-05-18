@@ -1,0 +1,1 @@
+//DELETE /api/budgets/[id] → delete a budget
