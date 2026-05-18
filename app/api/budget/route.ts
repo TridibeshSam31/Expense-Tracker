@@ -3,6 +3,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "@/lib/auth-utils";
 import { prisma } from "@/lib/prisma";
+import { budgetSchema } from "@/Schema/budgetSchema";
 
 //return all budgets for that month for the logged-in user format is "YYYY-MM"
 export async function GET(request: NextRequest , response: NextResponse){
@@ -13,19 +14,19 @@ export async function GET(request: NextRequest , response: NextResponse){
         }
         const {searchParams} = new URL(request.url)
         const month = searchParams.get('month');
-        const year = searchParams.get('year')
+        
 
-        if (!month || !year) {
-            return NextResponse.json({error:'month and year are required'},{status:400})
+        if (!month ) {
+            return NextResponse.json({error:'month is required'},{status:400})
         }
         
         const budgets = await prisma.budget.findMany({
-            where:{
-                userId:session.user?.id,
-                month:`${year}-${month}`
-                
-            }
-        })
+       where: {
+        userId: session.user.id,
+        month: month  // directly "2025-05"
+        },
+          include: { category: true }  
+       })
 
         return NextResponse.json({budgets})
 
@@ -36,40 +37,44 @@ export async function GET(request: NextRequest , response: NextResponse){
 }
 
 //POST /api/budgets → create or update a budget (use Prisma's upsert)
-export async function POST(request: NextRequest , response: NextResponse){
+export async function POST(request: NextRequest) {
     try {
         const session = await getServerSession()
-        if(!session?.user?.id){
-            return NextResponse.json({error:'Unauthorized'},{status:401})
+        if (!session?.user?.id) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
         }
-        const body = await request.json()
-        const {amount,month,year,categoryId} = body
 
-        if(!amount||!month||!year||!categoryId){
-            return NextResponse.json({error:'All fields are required'},{status:400})
-        }
-        const budget = await prisma.budget.upsert({
-            where:{
-                userId_categoryId_month:{
-                    userId:session.user.id,
-                    categoryId:categoryId,
-                    month:`${year}-${month}`
-                }
-            },
-            update:{
-                amount
-            },
-            create:{
-                amount,
-                userId:session.user.id,
-                categoryId,
-                month:`${year}-${month}`
+        const body = await request.json()
+        const { amount, month, categoryId } = budgetSchema.parse(body)
+
+        const resolvedCategoryId = categoryId ?? null
+
+        const existing = await prisma.budget.findFirst({
+            where: {
+                userId: session.user.id,
+                month,
+                categoryId: resolvedCategoryId
             }
         })
 
-        NextResponse.json({budget});
-    } catch (error) {
-        return NextResponse.json({error:'Internal Server Error'},{status:500})
-    }
+        const budget = existing
+            ? await prisma.budget.update({
+                where: { id: existing.id },
+                data: { amount }
+            })
+            : await prisma.budget.create({
+                data: {
+                    amount,
+                    userId: session.user.id,
+                    categoryId: resolvedCategoryId,
+                    month
+                }
+            })
 
+        return NextResponse.json({ budget }, { status: 201 })
+
+    } catch (error) {
+        console.error('Error creating/updating budget:', error)
+        return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
+    }
 }
