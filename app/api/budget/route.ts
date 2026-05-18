@@ -6,7 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { budgetSchema } from "@/Schema/budgetSchema";
 
 //return all budgets for that month for the logged-in user format is "YYYY-MM"
-export async function GET(request: NextRequest , response: NextResponse){
+export async function GET(request: NextRequest ){
     try {
         const session = await getServerSession()
         if(!session?.user?.id){

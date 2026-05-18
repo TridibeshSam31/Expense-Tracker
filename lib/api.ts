@@ -431,3 +431,9 @@ export function useDeleteCategory(){
         }
     })
 }
+
+
+//writing  tanstack query hooks for budget 
+
+//for get request we will use useQuery
+
