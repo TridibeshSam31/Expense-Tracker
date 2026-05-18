@@ -6,32 +6,32 @@ import { prisma } from "@/lib/prisma";
 import { budgetSchema } from "@/Schema/budgetSchema";
 
 //return all budgets for that month for the logged-in user format is "YYYY-MM"
-export async function GET(request: NextRequest ){
+export async function GET(request: NextRequest) {
     try {
         const session = await getServerSession()
-        if(!session?.user?.id){
-            return NextResponse.json({error:'Unauthorized'},{status:401})
+        if (!session?.user?.id) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
         }
-        const {searchParams} = new URL(request.url)
+        const { searchParams } = new URL(request.url)
         const month = searchParams.get('month');
-        
 
-        if (!month ) {
-            return NextResponse.json({error:'month is required'},{status:400})
+
+        if (!month) {
+            return NextResponse.json({ error: 'month is required' }, { status: 400 })
         }
-        
-        const budgets = await prisma.budget.findMany({
-       where: {
-        userId: session.user.id,
-        month: month  // directly "2025-05"
-        },
-          include: { category: true }  
-       })
 
-        return NextResponse.json({budgets})
+        const budgets = await prisma.budget.findMany({
+            where: {
+                userId: session.user.id,
+                month: month  // directly "2025-05"
+            },
+            include: { category: true }
+        })
+
+        return NextResponse.json({ budgets })
 
     } catch (error) {
-        return NextResponse.json({error:'Internal Server Error'},{status:500})
+        return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
     }
 
 }

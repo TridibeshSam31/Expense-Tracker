@@ -18,7 +18,14 @@ import { Loader2, Trash2 } from 'lucide-react';
 
 type BudgetFormData = z.infer<typeof budgetSchema> 
 
-const currentMonth = new Date().toISOString().slice(0, 7) 
+const currentMonth = new Date().toISOString().slice(0, 7)
+const currentMonthStart = `${currentMonth}-01`
+const currentMonthEnd = new Date(
+    new Date().getFullYear(),
+    new Date().getMonth() + 1,
+    0,                          // last day of current month
+    23, 59, 59, 999
+).toISOString()
 
 export default function BudgetManager(){
     const {toast} = useToast()
@@ -26,8 +33,8 @@ export default function BudgetManager(){
     const {data: categoriesData = []} = useCategories()
     const categories = categoriesData
     const { data: stats } = useExpenseStats(
-        `${currentMonth}-01`,
-        new Date().toISOString()
+        currentMonthStart,
+        currentMonthEnd
     )
     const createOrUpdateBudget = useCreateOrUpdateBudget() 
     const deleteBudget = useDeleteBudget()
@@ -39,8 +46,8 @@ export default function BudgetManager(){
     }
 
     const {register,handleSubmit,formState:{errors},reset} = useForm<BudgetFormData>({
-        resolver:zodResolver(budgetSchema)
-
+        resolver:zodResolver(budgetSchema),
+        defaultValues: { month: currentMonth }
     })
 
     const onSubmit = async(data:BudgetFormData)=>{
@@ -95,8 +102,6 @@ export default function BudgetManager(){
                     Set Budget — {currentMonth}
                 </h2>
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-                    {/* Hidden month field */}
-                    <input type="hidden" {...register('month')} />
 
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">

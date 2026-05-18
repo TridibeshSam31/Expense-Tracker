@@ -454,12 +454,12 @@ export function useBudgets(month:string){
         queryFn:async()=>{
             const params = new URLSearchParams()
             params.append('month',month)
-            const response = await fetch(`/api/budgets?${params.toString()}`)
+            const response = await fetch(`/api/budget?${params.toString()}`)
             if(!response.ok){
                 throw new Error('Failed to fetch budgets')
             }
-            return response.json()
-
+            const data = await response.json()
+            return data.budgets ?? []
         }
     })
 }
@@ -474,7 +474,7 @@ export function useCreateOrUpdateBudget(){
             month:string,
             categoryId?:string | null
         })=>{
-             const response = await fetch('/api/budgets',{
+             const response = await fetch('/api/budget',{
                 method:"POST",
                 headers:{
                     "content-type":"application/json"
@@ -497,7 +497,7 @@ export function useDeleteBudget() {
     const queryClient = useQueryClient()
     return useMutation({
         mutationFn: async (id: string) => {
-            const response = await fetch(`/api/budgets/${id}`, {
+            const response = await fetch(`/api/budget/${id}`, {
                 method: "DELETE"
             })
             if (!response.ok) {
