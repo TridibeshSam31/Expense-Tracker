@@ -16,6 +16,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { useExpenses, useCategories } from '@/lib/api'
+import BudgetManager from '@/components/BudgetManager'
 
 interface User {
   id: string
@@ -130,10 +131,12 @@ export default function DashboardClient({user}:{user:User}){
         </div>
 
         {/* Tabs */}
-        <Tabs defaultValue="expenses" className="space-y-6">
+        <Tabs defaultValue="expenses" className="space-y-8">
           <TabsList>
             <TabsTrigger value="expenses">Expenses</TabsTrigger>
             <TabsTrigger value="categories">Categories</TabsTrigger>
+
+            <TabsTrigger value="budget">Budget</TabsTrigger>
           </TabsList>
 
           <TabsContent value="expenses" className="space-y-6">
@@ -158,6 +161,9 @@ export default function DashboardClient({user}:{user:User}){
 
           <TabsContent value="categories" className="space-y-6">
             <CategoryManager />
+          </TabsContent>
+          <TabsContent value="budget" className="space-y-6">
+            <BudgetManager />
           </TabsContent>
         </Tabs>
       </main>
